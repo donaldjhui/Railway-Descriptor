@@ -98,7 +98,7 @@ function number_of_trips(nodes_map, start, end, max_stops) {
     // Saves the number of possible trips
     let num_trips = 0;
 
-    // Saves the visited stop
+    // Saves the visited stops
     let visited = [];
 
     // Contains how many stops we have had for the current route
@@ -161,7 +161,7 @@ function number_of_trips2(nodes_map, start, end, max_stops) {
     // Saves the number of possible trips
     let num_trips = 0;
 
-    // Saves the visited stop
+    // Saves the visited stops
     let visited = [];
 
     // Contains how many stops we have had for the current route
@@ -332,6 +332,27 @@ function find_shortest_route(nodes_map, start, end) {
     }
 }
 
+// Get the number of different routes from 'start' to 'end' with a distance less than 'max_dist'
+function find_diff_routes(nodes_map, start, end, max_dist) {
+
+    // Saves the number of possible routes with a distance less than max_dist
+    let num_routes = 0;
+
+    // Saves the visited stops
+    let visited = [];
+
+    // Contains how many stops we have had for the current route
+    let curr_dist = 0;
+
+    nearby_stops(start, end, max_dist);
+
+    return num_routes;
+
+    function nearby_stops(start, end, max) {
+        
+    }
+}
+
 // Read user input
 var readline = require('readline');
 
@@ -347,46 +368,60 @@ read.on('line', (nodes) => {
     // Request graph routes/nodes and organize the routes/nodes into a map
     nodes_map = createDGraph(nodes);
 
-    // Questions #1-#5
-    findDistances(nodes_map);
+    // testing purposes
+    console.log(nodes_map);
 
-    // Question #6
+    // // Questions #1-#5
+    // findDistances(nodes_map);
+
+    // // Question #6
+    // // Start and end stop
+    // start = 'C';
+    // end = 'C';
+    // // Maximum number of stops
+    // max_stops = 3;
+    // // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
+    // num_trips = number_of_trips(nodes_map, start, end, max_stops);
+    // console.log("Output #6: " + num_trips);
+
+    // // Question #7
+    // // Start and end stop
+    // start = 'A';
+    // end = 'C';
+    // // Number of stops
+    // num_stops = 4;
+    // // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
+    // num_trips = number_of_trips2(nodes_map, start, end, num_stops);
+    // console.log("Output #7: " + num_trips);
+
+    // // Question #8
+    // // Start and end stop
+    // start = 'A';
+    // end = 'C';
+
+    // // Find the shortest route from 'start' to 'end'
+    // shortest_route = find_shortest_route(nodes_map, start, end);
+    // console.log("Output # 8: " + shortest_route);
+
+    // // Question #9
+    // // Start and end stop
+    // start = 'B';
+    // end = 'B';
+
+    // // Find the shortest route from 'start' to 'end'
+    // shortest_route = find_shortest_route(nodes_map, start, end);
+    // console.log("Output # 9: " + shortest_route);
+
+    // Question # 10
     // Start and end stop
     start = 'C';
     end = 'C';
-    // Maximum number of stops
-    max_stops = 3;
-    // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
-    num_trips = number_of_trips(nodes_map, start, end, max_stops);
-    console.log("Output #6: " + num_trips);
+    // Maximum distance (can not be over 30)
+    max_dist = 30
 
-    // Question #7
-    // Start and end stop
-    start = 'A';
-    end = 'C';
-    // Number of stops
-    num_stops = 4;
-    // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
-    num_trips = number_of_trips2(nodes_map, start, end, num_stops);
-    console.log("Output #7: " + num_trips);
-
-    // Question #8
-    // Start and end stop
-    start = 'A';
-    end = 'C';
-
-    // Find the shortest route from 'start' to 'end'
-    shortest_route = find_shortest_route(nodes_map, start, end);
-    console.log("Output # 8: " + shortest_route);
-
-    // Question #9
-    // Start and end stop
-    start = 'B';
-    end = 'B';
-
-    // Find the shortest route from 'start' to 'end'
-    shortest_route = find_shortest_route(nodes_map, start, end);
-    console.log("Output # 9: " + shortest_route);
+    // Find the number of different routes from 'start' to 'end' with a distance of less than 30
+    diff_routes = find_diff_routes(nodes_map, start, end, max_dist);
+    console.log("Output # 10: " + diff_routes);
 
     read.close();
 });
