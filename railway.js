@@ -104,18 +104,14 @@ function number_of_trips(nodes_map, start, end, max_stops) {
     // Contains how many stops we have had for the current route
     let stops = 0;
 
-    let existing_route = iterate_stops(start, end, stops, max_stops);
-
-    if (existing_route == "NO SUCH ROUTE") {
-        return existing_route;
-    }
+    iterate_stops(start, end, stops, max_stops);
 
     return num_trips;
 
     // Iterate through the stops in the directed graph
     function iterate_stops(start, end, stops, max_stops) {
 
-        // return "NO SUCH ROUTE" if 'start' and 'end' are not valid stops
+        // Return "NO SUCH ROUTE" if 'start' and 'end' are not valid stops
         if ((start in nodes_map) && (end in nodes_map)) {
 
             // number of stops we have made
@@ -130,7 +126,7 @@ function number_of_trips(nodes_map, start, end, max_stops) {
 
             for (let nearby in nodes_map[start]) {
 
-                // print statements for testing purposes
+                // // print statements for testing purposes
                 // console.log("_______________________________");
                 // console.log("CURRENT STOP: " + start);
                 // console.log("NEXT STOP: " + nearby);
@@ -151,7 +147,8 @@ function number_of_trips(nodes_map, start, end, max_stops) {
                 iterate_stops(nearby, end, stops, max_stops);   
             }
         } else {
-            return "NO SUCH ROUTE";
+            num_trips = "NO SUCH ROUTE";
+            return 0;
         }
 
         return 0;
@@ -170,17 +167,17 @@ function number_of_trips2(nodes_map, start, end, max_stops) {
     // Contains how many stops we have had for the current route
     let stops = 0;
 
-    let existing_route = iterate_stops2(start, end, stops, max_stops);
+    iterate_stops2(start, end, stops, max_stops);
 
-    if (existing_route == "NO SUCH ROUTE") {
-        return existing_route;
-    }
+    // if (existing_route == "NO SUCH ROUTE") {
+    //     return existing_route;
+    // }
 
     return num_trips;
 
     function iterate_stops2(start, end, stops, max_stops) {
 
-        // return "NO SUCH ROUTE" if 'start' and 'end' are not valid stops
+        // Return "NO SUCH ROUTE" if 'start' and 'end' are not valid stops
         if ((start in nodes_map) && (end in nodes_map)) {
 
             // number of stops we have made
@@ -194,7 +191,7 @@ function number_of_trips2(nodes_map, start, end, max_stops) {
 
             for (let nearby in nodes_map[start]) {
 
-                // print statements for testing purposes
+                // // print statements for testing purposes
                 // console.log("_______________________________");
                 // console.log("CURRENT STOP: " + start);
                 // console.log("NEXT STOP: " + nearby);
@@ -215,25 +212,121 @@ function number_of_trips2(nodes_map, start, end, max_stops) {
                 iterate_stops2(nearby, end, stops, max_stops);   
             }
         } else {
-            return "NO SUCH ROUTE";
+            num_trips = "NO SUCH ROUTE";
+            return 0;
         }
 
         return 0;
     }
 }
 
-// Get the number of trips from 'start' to 'end' with exactly 4 stops
-function shortest_route(nodes_map, start, end) {
+// Get the distance of the shortest route from 'start' to 'end'
+function find_shortest_route(nodes_map, start, end) {
 
-    // visited stops
-    let visited = [];
+    // Save the original starting stop
+    let wrong_route = false;
 
-    // Mark if the current node is the shortest
-    let shortest = null;
+    // Shortest visited route
+    let current_visited = [];
 
-    closest_stop(start, end, stops);
+    // Distance for the current route we are checking
+    let current_route = 0;
+
+    // Distance of the shortest route
+    let shortest_route = null;
+
+    closest_stop(start, end);
+
+    return shortest_route;
 
     function closest_stop(start, end) {
+
+        // Return "NO SUCH ROUTE" if 'start' and 'end' are not valid stops
+        if ((start in nodes_map) && (end in nodes_map)) {
+
+            if (!(current_visited.includes(start))) {
+                current_visited.push(start);  
+            }
+
+            // Check each each nearby stop
+            for (let nearby in nodes_map[start]) {
+
+                // Distance of the nearby stop
+                let nearby_dist = nodes_map[start][nearby];
+
+                // We were on the wrong route before, try a different route
+                if (wrong_route === true) {
+                    current_visited.pop();
+                    current_route -= nearby_dist; 
+                    wrong_route = false;
+                    return 0;
+                }                           
+            
+                // If we have already been to the stop before, try a new route
+                if (current_visited.includes(nearby) && nearby != end) {
+                    current_route -= nearby_dist;
+                    current_visited.pop();
+                    return 0;
+                }
+
+                // If we have already been to the stop before, and it is equal to our destination
+                if (current_visited.includes(nearby) && nearby == end) {
+                    current_route += nearby_dist;
+                }
+
+                // It is our first time going to this stop, add it to our list visited stops and add to our distance
+                if (!(current_visited.includes(nearby))) {
+                    current_route += nearby_dist;
+                    current_visited.push(nearby);
+                } 
+
+                // Our current route is greater than our shortest route so we do not need to further check it
+                if (shortest_route != null && current_route > shortest_route) {
+
+                    let counter = 0;
+
+                    for (let stop in nodes_map[start]) {
+
+                        // Check if all the nearby stops have been checked
+                        if (current_visited.includes(stop)) {
+                            counter += 1;
+                        }
+
+                        // If all the nearby stops have been checked, then move on to a different route
+                        if (counter === Object.keys(nodes_map[start]).length) {
+                            wrong_route = true;
+                            // subtract the distance, we are going try a different route
+                            current_visited.pop();
+                            current_route -= nearby_dist;
+                            return 0;
+                        }
+
+                        // Mark wrong route
+                        wrong_route = true;
+                    }
+                } 
+
+                // Check if our incoming stop is equivalent to our 'end' stop
+                if (nearby === end) {
+
+                    // It is the first time finding a route or our new route is closer than our saved route
+                    if (shortest_route == null || current_route <= shortest_route) {
+                        
+                        // If it is equal to the end route
+                        shortest_route = current_route;
+                        current_route = 0;
+                        current_visited = [];
+                        return 0;
+                    }
+                }
+
+                // move on to the next stop
+                closest_stop(nearby, end);
+            }
+        } else {
+            shortest_route = "NO SUCH ROUTE";
+            return 0;
+        }
 
         return 0;
     }
@@ -254,31 +347,28 @@ read.on('line', (nodes) => {
     // Request graph routes/nodes and organize the routes/nodes into a map
     nodes_map = createDGraph(nodes);
 
-    // testing purposes
-    console.log(nodes_map);
-
     // Questions #1-#5
     findDistances(nodes_map);
 
-    // // Question #6
-    // // Start and end stop
-    // start = 'C';
-    // end = 'C';
-    // // Maximum number of stops
-    // max_stops = 3;
-    // // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
-    // num_trips = number_of_trips(nodes_map, start, end, max_stops);
-    // console.log("Output #6: " + num_trips);
+    // Question #6
+    // Start and end stop
+    start = 'C';
+    end = 'C';
+    // Maximum number of stops
+    max_stops = 3;
+    // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
+    num_trips = number_of_trips(nodes_map, start, end, max_stops);
+    console.log("Output #6: " + num_trips);
 
-    // // Question #7
-    // // Start and end stop
-    // start = 'A';
-    // end = 'C';
-    // // Number of stops
-    // num_stops = 4;
-    // // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
-    // num_trips = number_of_trips2(nodes_map, start, end, num_stops);
-    // console.log("Output #7: " + num_trips);
+    // Question #7
+    // Start and end stop
+    start = 'A';
+    end = 'C';
+    // Number of stops
+    num_stops = 4;
+    // Find number of trips from 'start' to 'end' with a maximum of 'max_stops'
+    num_trips = number_of_trips2(nodes_map, start, end, num_stops);
+    console.log("Output #7: " + num_trips);
 
     // Question #8
     // Start and end stop
@@ -286,9 +376,17 @@ read.on('line', (nodes) => {
     end = 'C';
 
     // Find the shortest route from 'start' to 'end'
-    shortest_route = shortestRoute(nodes_map, start, end);
-    console.log("Output #8: " + shortest_route);
-    shortest_route(nodes_map, start, end);
+    shortest_route = find_shortest_route(nodes_map, start, end);
+    console.log("Output # 8: " + shortest_route);
+
+    // Question #9
+    // Start and end stop
+    start = 'B';
+    end = 'B';
+
+    // Find the shortest route from 'start' to 'end'
+    shortest_route = find_shortest_route(nodes_map, start, end);
+    console.log("Output # 9: " + shortest_route);
 
     read.close();
 });
@@ -298,5 +396,3 @@ read.on('line', (nodes) => {
 // Example: AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7
 
 // Example: AB5, BC4, CD8, DE6, AD5, CE2, EB3, AE7, EC2
-
-// AB5, BC4, CD8, DE6, AD5, CE2, EB3, AE7, EC2, CB2
