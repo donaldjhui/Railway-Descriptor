@@ -10,6 +10,6 @@
 4. Type "node railway.js" into command prompt.
 5. You will be prompted an input of directed graph node. Input the directed graph nodes along with their distances, each separated by a comma.
 
-###### An example input is shown below
+### An example input is shown below
 
 **Example:** AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7
