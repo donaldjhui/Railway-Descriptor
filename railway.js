@@ -215,10 +215,10 @@ function find_shortest_route(nodes_map, start, end) {
     let wrong_route = false;
 
     // Shortest visited route
-    let current_visited = [];
+    let curr_visited = [];
 
     // Distance for the current route we are checking
-    let current_route = 0;
+    let curr_route = 0;
 
     // Distance of the shortest route
     let shortest_route = null;
@@ -232,8 +232,8 @@ function find_shortest_route(nodes_map, start, end) {
         // Return "NO SUCH ROUTE" if 'start' and 'end' are not valid stops
         if ((start in nodes_map) && (end in nodes_map)) {
 
-            if (!(current_visited.includes(start))) {
-                current_visited.push(start);  
+            if (!(curr_visited.includes(start))) {
+                curr_visited.push(start);  
             }
 
             // Check each each nearby stop
@@ -244,39 +244,39 @@ function find_shortest_route(nodes_map, start, end) {
 
                 // We were on the wrong route before, try a different route
                 if (wrong_route === true) {
-                    current_visited.pop();
-                    current_route -= nearby_dist; 
+                    curr_visited.pop();
+                    curr_route -= nearby_dist; 
                     wrong_route = false;
                     return 0;
                 }                           
             
                 // If we have already been to the stop before, try a new route
-                if (current_visited.includes(nearby) && nearby != end) {
-                    current_route -= nearby_dist;
-                    current_visited.pop();
+                if (curr_visited.includes(nearby) && nearby != end) {
+                    curr_route -= nearby_dist;
+                    curr_visited.pop();
                     return 0;
                 }
 
                 // If we have already been to the stop before, and it is equal to our destination
-                if (current_visited.includes(nearby) && nearby == end) {
-                    current_route += nearby_dist;
+                if (curr_visited.includes(nearby) && nearby == end) {
+                    curr_route += nearby_dist;
                 }
 
                 // It is our first time going to this stop, add it to our list visited stops and add to our distance
-                if (!(current_visited.includes(nearby))) {
-                    current_route += nearby_dist;
-                    current_visited.push(nearby);
+                if (!(curr_visited.includes(nearby))) {
+                    curr_route += nearby_dist;
+                    curr_visited.push(nearby);
                 } 
 
                 // Our current route is greater than our shortest route so we do not need to further check it
-                if (shortest_route != null && current_route > shortest_route) {
+                if (shortest_route != null && curr_route > shortest_route) {
 
                     let counter = 0;
 
                     for (let stop in nodes_map[start]) {
 
                         // Check if all the nearby stops have been checked
-                        if (current_visited.includes(stop)) {
+                        if (curr_visited.includes(stop)) {
                             counter += 1;
                         }
 
@@ -284,8 +284,8 @@ function find_shortest_route(nodes_map, start, end) {
                         if (counter === Object.keys(nodes_map[start]).length) {
                             wrong_route = true;
                             // subtract the distance, we are going try a different route
-                            current_visited.pop();
-                            current_route -= nearby_dist;
+                            curr_visited.pop();
+                            curr_route -= nearby_dist;
                             return 0;
                         }
 
@@ -299,12 +299,12 @@ function find_shortest_route(nodes_map, start, end) {
                 if (nearby === end) {
 
                     // It is the first time finding a route or our new route is closer than our saved route
-                    if (shortest_route == null || current_route <= shortest_route) {
+                    if (shortest_route == null || curr_route <= shortest_route) {
                         
                         // If it is equal to the end route
-                        shortest_route = current_route;
-                        current_route = 0;
-                        current_visited = [];
+                        shortest_route = curr_route;
+                        curr_route = 0;
+                        curr_visited = [];
                         return 0;
                     }
                 }          
