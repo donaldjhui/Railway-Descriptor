@@ -497,9 +497,3 @@ read.on('line', (nodes) => {
 
     read.close();
 });
-
-// Install node.js if it is not already installed on your device at "https://nodejs.org/en/download/".
-// How to run code, type "node railway.js" then when prompted for the directed graph nodes, input them, separated by a comma, until the last one
-// Example: AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7
-
-// Example: AB5, BC4, CD8, DE6, AD5, CE2, EB3, AE7, EC2
